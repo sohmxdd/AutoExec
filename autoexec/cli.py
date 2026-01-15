@@ -1,67 +1,62 @@
 import argparse
 from pathlib import Path
-import os
 
 from autoexec.agent import AutoExecAgent
 
 
 def run_command(args):
-    cwd = Path(os.getcwd())
-
-    code_path = (cwd / args.code).resolve()
-    tests_path = (cwd / args.tests).resolve() if args.tests else None
+    # Resolve path safely (relative → absolute)
+    code_path = Path(args.code).expanduser().resolve()
 
     if not code_path.exists():
         raise FileNotFoundError(f"Code file not found: {code_path}")
 
-    if tests_path and not tests_path.exists():
-        raise FileNotFoundError(f"Tests file not found: {tests_path}")
+    tests_code = None
+    if args.tests:
+        tests_path = Path(args.tests).expanduser().resolve()
+        if not tests_path.exists():
+            raise FileNotFoundError(f"Tests file not found: {tests_path}")
+        tests_code = tests_path.read_text(encoding="utf-8")
 
-    code = code_path.read_text()
+    code = code_path.read_text(encoding="utf-8")
 
-    tests = tests_path.read_text() if tests_path else None
-
-    agent = AutoExecAgent()
+    agent = AutoExecAgent(
+        max_retries=args.retries,
+        backend=args.backend,
+    )
 
     result = agent.run(
         code=code,
-        tests=tests,
-        language="python"
+        tests=tests_code,
+        language=args.language,
     )
 
     print("\n=== FINAL RESULT ===")
-    print("STDOUT:")
-    print(result.stdout)
-
-    if result.stderr:
-        print("\nSTDERR:")
-        print(result.stderr)
-
-    print("\nSUCCESS:", result.success)
+    print("STDOUT:", result.stdout)
+    print("SUCCESS:", result.success)
 
 
 def main():
     parser = argparse.ArgumentParser(
         prog="autoexec",
-        description="AutoExec — self-healing code execution engine"
+        description="AutoExec — self-healing code execution engine",
     )
 
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    run_parser = subparsers.add_parser(
-        "run",
-        help="Run a Python file with automatic crash fixing"
-    )
-
+    run_parser = subparsers.add_parser("run", help="Run a code file")
+    run_parser.add_argument("code", help="Path to code file")
     run_parser.add_argument(
-        "code",
-        help="Path to Python file to execute"
+        "--tests", help="Optional tests file", default=None
     )
-
     run_parser.add_argument(
-        "--tests",
-        help="Optional tests file",
-        required=False
+        "--language", default="python", help="Programming language"
+    )
+    run_parser.add_argument(
+        "--backend", default="local", help="Execution backend"
+    )
+    run_parser.add_argument(
+        "--retries", type=int, default=5, help="Max retries"
     )
 
     run_parser.set_defaults(func=run_command)

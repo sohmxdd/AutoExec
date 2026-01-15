@@ -10,9 +10,8 @@ agent = AutoExecAgent()
 
 result = agent.run(
     code="""
-print("Looping forever")
-while True:
-    pass
+print("About to crash")
+1 / 0
 """
 )
 

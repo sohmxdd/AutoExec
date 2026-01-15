@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autoexec"
+version = "0.1.0"
+description = "AutoExec: An agent that executes, detects failures, and self-fixes code"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "Soham Mishra" }
+]
+
+dependencies = [
+    "groq",
+    "python-dotenv"
+]
+
+[project.scripts]
+autoexec = "autoexec.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["autoexec*"]

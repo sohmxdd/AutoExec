@@ -20,3 +20,5 @@ experiments/
 
 # OS
 .DS_Store
+
+autoexec.egg-info/
