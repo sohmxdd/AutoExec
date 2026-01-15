@@ -105,7 +105,15 @@ Bash
 python -m autoexec run path/to/file.py --tests "assert 'hello' in output"
 
 ## 🤝 Contributing
-Contributions are welcome! Please do not commit .env or memory.json.
+Contributions are welcome!
+Star the Project 🌟 - It helps others discover the tool!
+
+Fork the Project - Create your own copy to experiment.
+
+Open an Issue - Report bugs or suggest new features.
+
+Create a Pull Request - Submit your changes for review.
+Please do not commit .env or memory.json.
 
 
 ---
