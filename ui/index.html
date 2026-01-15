@@ -40,29 +40,29 @@
     body { font-family: 'Inter', sans-serif; }
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     
-    /* Custom scrollbar */
+    
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #0f0f1a; border-radius: 4px; }
     ::-webkit-scrollbar-thumb { background: #3f3f5a; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #5a5a7a; }
     
-    /* Textarea styling */
+    
     textarea {
       resize: none;
       scrollbar-width: thin;
     }
     
-    /* Glow effects */
+    
     .glow-success { box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
     .glow-error { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
     .glow-warning { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
     .glow-timeout { box-shadow: 0 0 20px rgba(249, 115, 22, 0.3); }
     
-    /* Diff highlighting */
+    
     .diff-add { background: rgba(34, 197, 94, 0.15); border-left: 3px solid #22c55e; }
     .diff-remove { background: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; }
     
-    /* Button pulse animation */
+    
     @keyframes pulse-ring {
       0% { transform: scale(1); opacity: 1; }
       100% { transform: scale(1.3); opacity: 0; }
@@ -77,11 +77,11 @@
       z-index: -1;
     }
     
-    /* Loading spinner */
+    
     @keyframes spin { to { transform: rotate(360deg); } }
     .spinner { animation: spin 1s linear infinite; }
     
-    /* Tab active state */
+    
     .tab-active { 
       border-bottom: 2px solid #6366f1;
       color: #818cf8;
@@ -90,7 +90,7 @@
 </head>
 <body class="bg-surface-200 text-gray-100 min-h-screen">
   
-  <!-- Header -->
+ 
   <header class="bg-surface-100 border-b border-gray-800 sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -105,7 +105,7 @@
         </div>
       </div>
       
-      <!-- Status Indicator -->
+    
       <div id="statusBadge" class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-50 border border-gray-700">
         <span id="statusDot" class="w-2 h-2 rounded-full bg-gray-500"></span>
         <span id="statusText" class="text-sm font-medium text-gray-400">Ready</span>
@@ -115,13 +115,13 @@
 
   <main class="max-w-7xl mx-auto px-6 py-8">
     
-    <!-- Main Grid -->
+    
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       
-      <!-- Left Column - Code Input -->
+
       <div class="space-y-6">
         
-        <!-- Code Editor -->
+        
         <section class="bg-surface-100 rounded-2xl border border-gray-800 overflow-hidden">
           <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-surface-50">
             <div class="flex items-center gap-2">
@@ -165,7 +165,7 @@ for i in range(10):
           </div>
         </section>
 
-        <!-- Tests Editor (Collapsible) -->
+       
         <section class="bg-surface-100 rounded-2xl border border-gray-800 overflow-hidden">
           <button onclick="toggleTests()" class="w-full flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-surface-50 hover:bg-surface-100 transition-colors">
             <div class="flex items-center gap-2">
@@ -191,7 +191,7 @@ print("All tests passed!")</textarea>
           </div>
         </section>
 
-        <!-- Run Button -->
+       
         <button 
           id="runButton" 
           onclick="runCode()"
@@ -208,10 +208,10 @@ print("All tests passed!")</textarea>
         </button>
       </div>
 
-      <!-- Right Column - Output -->
+      
       <div class="space-y-6">
         
-        <!-- Output Tabs -->
+        
         <section class="bg-surface-100 rounded-2xl border border-gray-800 overflow-hidden">
           <div class="flex border-b border-gray-800 bg-surface-50">
             <button onclick="switchTab('stdout')" id="tabStdout" class="flex-1 px-4 py-3 text-sm font-medium text-gray-300 hover:text-white transition-colors tab-active flex items-center justify-center gap-2">
@@ -246,7 +246,7 @@ fib(9) = 34</pre>
           </div>
         </section>
 
-        <!-- Code Diff Section -->
+        
         <section class="bg-surface-100 rounded-2xl border border-gray-800 overflow-hidden">
           <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-surface-50">
             <div class="flex items-center gap-2">
@@ -268,7 +268,7 @@ fib(9) = 34</pre>
           </div>
           
           <div class="grid grid-cols-2 divide-x divide-gray-800">
-            <!-- Before -->
+           
             <div>
               <div class="px-3 py-2 bg-surface-200/50 border-b border-gray-800">
                 <span class="text-xs font-medium text-gray-500">BEFORE</span>
@@ -284,7 +284,7 @@ fib(9) = 34</pre>
               </div>
             </div>
             
-            <!-- After -->
+           
             <div>
               <div class="px-3 py-2 bg-surface-200/50 border-b border-gray-800">
                 <span class="text-xs font-medium text-gray-500">AFTER</span>
@@ -302,7 +302,7 @@ fib(9) = 34</pre>
           </div>
         </section>
 
-        <!-- Status Cards -->
+        
         <div class="grid grid-cols-4 gap-3">
           <button onclick="setStatus('success')" class="group p-4 bg-surface-100 rounded-xl border border-gray-800 hover:border-success/50 hover:glow-success transition-all duration-300">
             <div class="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center mb-2 group-hover:bg-success/20 transition-colors">
@@ -344,7 +344,7 @@ fib(9) = 34</pre>
     </div>
   </main>
 
-  <!-- Footer -->
+  
   <footer class="border-t border-gray-800 mt-12">
     <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between text-sm text-gray-500">
       <span>AutoExec v1.0.0</span>
@@ -358,7 +358,7 @@ fib(9) = 34</pre>
   </footer>
 
   <script>
-    // Update line numbers
+    
     function updateLineNumbers() {
       const editor = document.getElementById('codeEditor');
       const lineNumbers = document.getElementById('lineNumbers');
@@ -366,10 +366,10 @@ fib(9) = 34</pre>
       lineNumbers.innerHTML = Array.from({length: lines}, (_, i) => i + 1).join('<br>');
     }
     
-    // Initialize line numbers
+    
     updateLineNumbers();
     
-    // Toggle tests section
+  
     function toggleTests() {
       const container = document.getElementById('testsContainer');
       const chevron = document.getElementById('testsChevron');
@@ -377,7 +377,7 @@ fib(9) = 34</pre>
       chevron.classList.toggle('rotate-180');
     }
     
-    // Switch output tabs
+    
     function switchTab(tab) {
       const tabs = ['stdout', 'stderr'];
       tabs.forEach(t => {
@@ -388,13 +388,13 @@ fib(9) = 34</pre>
       document.getElementById(`${tab}Panel`).classList.remove('hidden');
     }
     
-    // Clear editor
+   
     function clearEditor() {
       document.getElementById('codeEditor').value = '';
       updateLineNumbers();
     }
     
-    // Set status
+    
     function setStatus(status) {
       const statusDot = document.getElementById('statusDot');
       const statusText = document.getElementById('statusText');
@@ -413,25 +413,25 @@ fib(9) = 34</pre>
       statusDot.className = `w-2 h-2 rounded-full ${config.color}`;
       statusText.textContent = config.text;
       
-      // Remove all glow classes and add new one
+      
       statusBadge.classList.remove('glow-success', 'glow-error', 'glow-warning', 'glow-timeout');
       if (config.glow) statusBadge.classList.add(config.glow);
     }
     
-    // Simulate run
+    
     function runCode() {
       const runButton = document.getElementById('runButton');
       const runIcon = document.getElementById('runIcon');
       const runText = document.getElementById('runText');
       
-      // Show loading state
+      
       runButton.disabled = true;
       runButton.classList.add('opacity-75');
       runIcon.innerHTML = '<svg class="w-5 h-5 spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>';
       runText.textContent = 'Running...';
       setStatus('running');
       
-      // Simulate execution
+      
       setTimeout(() => {
         runButton.disabled = false;
         runButton.classList.remove('opacity-75');
@@ -441,7 +441,7 @@ fib(9) = 34</pre>
       }, 1500);
     }
     
-    // Sync textarea scroll with line numbers
+  
     document.getElementById('codeEditor').addEventListener('scroll', function() {
       document.getElementById('lineNumbers').style.transform = `translateY(-${this.scrollTop}px)`;
     });
