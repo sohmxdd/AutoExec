@@ -1,4 +1,4 @@
-# AutoExec 🚀
+# AutoExec 
 ### **Self-Healing Code Execution Engine**
 
 AutoExec is a developer tool that runs code, detects failures, fixes them using an LLM, retries execution, and remembers the fix so the same error is instantly resolved next time.
@@ -7,7 +7,7 @@ Think of it as an intelligent execution layer that sits between your code and ru
 
 ---
 
-## 💡 Why AutoExec?
+##  Why AutoExec?
 
 * **Stop wasting time** fixing repetitive runtime errors.
 * **Automatically debug** crashes and failing tests.
@@ -17,7 +17,7 @@ Think of it as an intelligent execution layer that sits between your code and ru
 
 ---
 
-## ✨ Core Features
+##  Core Features
 
 * **Self-healing execution:** Detects runtime errors and retries with fixes.
 * **LLM-powered fixes:** Uses an LLM to propose minimal, targeted code changes.
@@ -128,5 +128,5 @@ Now that your rebase is finished, follow these steps to finish the job:
     git push origin main
     ```
 
-**Would you like me to generate a `.gitignore` file for you now to make sure your `.env` and `memory.jso
+
 
