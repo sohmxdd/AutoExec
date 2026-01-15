@@ -10,8 +10,8 @@ agent = AutoExecAgent()
 
 result = agent.run(
     code="""
-print("About to crash")
-1 / 0
+print("Hello!")
+10 / 0
 """
 )
 

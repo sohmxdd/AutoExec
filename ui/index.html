@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoExec - Developer Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            surface: {
+              50: '#1a1a2e',
+              100: '#16162a',
+              200: '#0f0f1a',
+              300: '#0a0a12'
+            },
+            accent: {
+              DEFAULT: '#6366f1',
+              light: '#818cf8'
+            },
+            success: '#22c55e',
+            warning: '#f59e0b',
+            error: '#ef4444',
+            timeout: '#f97316'
+          },
+          fontFamily: {
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .font-mono { font-family: 'JetBrains Mono', monospace; }
+    
+    /* Custom scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #0f0f1a; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb { background: #3f3f5a; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #5a5a7a; }
+    
+    /* Textarea styling */
+    textarea {
+      resize: none;
+      scrollbar-width: thin;
+    }
+    
+    /* Glow effects */
+    .glow-success { box-shadow: 0 0 20px rgba(34, 197, 94, 0.3); }
+    .glow-error { box-shadow: 0 0 20px rgba(239, 68, 68, 0.3); }
+    .glow-warning { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); }
+    .glow-timeout { box-shadow: 0 0 20px rgba(249, 115, 22, 0.3); }
+    
+    /* Diff highlighting */
+    .diff-add { background: rgba(34, 197, 94, 0.15); border-left: 3px solid #22c55e; }
+    .diff-remove { background: rgba(239, 68, 68, 0.15); border-left: 3px solid #ef4444; }
+    
+    /* Button pulse animation */
+    @keyframes pulse-ring {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.3); opacity: 0; }
+    }
+    .btn-pulse::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: inherit;
+      animation: pulse-ring 1.5s ease-out infinite;
+      z-index: -1;
+    }
+    
+    /* Loading spinner */
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner { animation: spin 1s linear infinite; }
+    
+    /* Tab active state */
+    .tab-active { 
+      border-bottom: 2px solid #6366f1;
+      color: #818cf8;
+    }
+  </style>
+</head>
+<body class="bg-surface-200 text-gray-100 min-h-screen">
+  
+  <!-- Header -->
+  <header class="bg-surface-100 border-b border-gray-800 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-purple-500 flex items-center justify-center">
+          <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl font-bold text-white">AutoExec</h1>
+          <p class="text-xs text-gray-500">Developer Automation Tool</p>
+        </div>
+      </div>
+      
+      <!-- Status Indicator -->
+      <div id="statusBadge" class="flex items-center gap-2 px-4 py-2 rounded-full bg-surface-50 border border-gray-700">
+        <span id="statusDot" class="w-2 h-2 rounded-full bg-gray-500"></span>
+        <span id="statusText" class="text-sm font-medium text-gray-400">Ready</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    
+    <!-- Main Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      
+      <!-- Left Column - Code Input -->
+      <div class="space-y-6">
+        
+        <!-- Code Editor -->
+        <section class="bg-surface-100 rounded-2xl border border-gray-800 overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-surface-50">
+            <div class="flex items-center gap-2">
+              <div class="flex gap-1.5">
+                <span class="w-3 h-3 rounded-full bg-red-500/80"></span>
+                <span class="w-3 h-3 rounded-full bg-yellow-500/80"></span>
+                <span class="w-3 h-3 rounded-full bg-green-500/80"></span>
+              </div>
+              <span class="ml-3 text-sm font-medium text-gray-300">Code Editor</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="clearEditor()" class="p-1.5 rounded-lg hover:bg-gray-700 text-gray-400 hover:text-white transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                </svg>
+              </button>
+              <select id="languageSelect" class="bg-surface-200 border border-gray-700 rounded-lg px-2 py-1 text-xs text-gray-300 focus:outline-none focus:border-accent">
+                <option value="python">Python</option>
+                <option value="javascript">JavaScript</option>
+                <option value="typescript">TypeScript</option>
+                <option value="bash">Bash</option>
+              </select>
+            </div>
+          </div>
+          <div class="relative">
+            <div id="lineNumbers" class="absolute left-0 top-0 w-12 h-full bg-surface-200/50 border-r border-gray-800 text-right pr-3 pt-4 text-gray-600 text-sm font-mono select-none overflow-hidden">1</div>
+            <textarea 
+              id="codeEditor" 
+              class="w-full h-80 bg-transparent text-gray-100 font-mono text-sm p-4 pl-16 focus:outline-none leading-6"
+              placeholder="# Enter your code here..."
+              spellcheck="false"
+              oninput="updateLineNumbers()"
+            >def fibonacci(n):
+    if n <= 1:
+        return n
+    return fibonacci(n-1) + fibonacci(n-2)
+
+# Test the function
+for i in range(10):
+    print(f"fib({i}) = {fibonacci(i)}")</textarea>
+          </div>
+        </section>
+
+        <!-- Tests Editor (Collapsible) -->
+        <section class="bg-surface-100 rounded-2xl border border-gray-800 overflow-hidden">
+          <button onclick="toggleTests()" class="w-full flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-surface-50 hover:bg-surface-100 transition-colors">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+              </svg>
+              <span class="text-sm font-medium text-gray-300">Tests (Optional)</span>
+            </div>
+            <svg id="testsChevron" class="w-5 h-5 text-gray-500 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+            </svg>
+          </button>
+          <div id="testsContainer" class="hidden">
+            <textarea 
+              id="testsEditor" 
+              class="w-full h-40 bg-transparent text-gray-100 font-mono text-sm p-4 focus:outline-none leading-6"
+              placeholder="# Write your test cases here..."
+              spellcheck="false"
+            >assert fibonacci(0) == 0
+assert fibonacci(1) == 1
+assert fibonacci(10) == 55
+print("All tests passed!")</textarea>
+          </div>
+        </section>
+
+        <!-- Run Button -->
+        <button 
+          id="runButton" 
+          onclick="runCode()"
+          class="relative w-full py-4 bg-gradient-to-r from-accent to-purple-500 hover:from-accent-light hover:to-purple-400 text-white font-semibold rounded-xl transition-all duration-300 flex items-center justify-center gap-3 group overflow-hidden"
+        >
+          <span id="runIcon">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </span>
+          <span id="runText">Run Code</span>
+          <span class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-12"></span>
+        </button>
+      </div>
+
+      <!-- Right Column - Output -->
+      <div class="space-y-6">
+        
+        <!-- Output Tabs -->
+        <section class="bg-surface-100 rounded-2xl border border-gray-800 overflow-hidden">
+          <div class="flex border-b border-gray-800 bg-surface-50">
+            <button onclick="switchTab('stdout')" id="tabStdout" class="flex-1 px-4 py-3 text-sm font-medium text-gray-300 hover:text-white transition-colors tab-active flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              STDOUT
+            </button>
+            <button onclick="switchTab('stderr')" id="tabStderr" class="flex-1 px-4 py-3 text-sm font-medium text-gray-500 hover:text-white transition-colors flex items-center justify-center gap-2">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+              STDERR
+              <span id="stderrBadge" class="hidden px-1.5 py-0.5 text-xs bg-red-500/20 text-red-400 rounded">1</span>
+            </button>
+          </div>
+          
+          <div id="stdoutPanel" class="p-4 h-64 overflow-auto">
+            <pre id="stdoutContent" class="font-mono text-sm text-gray-300 whitespace-pre-wrap">fib(0) = 0
+fib(1) = 1
+fib(2) = 1
+fib(3) = 2
+fib(4) = 3
+fib(5) = 5
+fib(6) = 8
+fib(7) = 13
+fib(8) = 21
+fib(9) = 34</pre>
+          </div>
+          <div id="stderrPanel" class="hidden p-4 h-64 overflow-auto">
+            <pre id="stderrContent" class="font-mono text-sm text-red-400 whitespace-pre-wrap">No errors</pre>
+          </div>
+        </section>
+
+        <!-- Code Diff Section -->
+        <section class="bg-surface-100 rounded-2xl border border-gray-800 overflow-hidden">
+          <div class="flex items-center justify-between px-4 py-3 border-b border-gray-800 bg-surface-50">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/>
+              </svg>
+              <span class="text-sm font-medium text-gray-300">Code Diff</span>
+            </div>
+            <div class="flex gap-4 text-xs">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                <span class="text-gray-500">Removed</span>
+              </span>
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                <span class="text-gray-500">Added</span>
+              </span>
+            </div>
+          </div>
+          
+          <div class="grid grid-cols-2 divide-x divide-gray-800">
+            <!-- Before -->
+            <div>
+              <div class="px-3 py-2 bg-surface-200/50 border-b border-gray-800">
+                <span class="text-xs font-medium text-gray-500">BEFORE</span>
+              </div>
+              <div class="p-3 h-48 overflow-auto font-mono text-xs">
+                <div class="diff-remove pl-2 py-0.5 text-red-300">- def fibonacci(n):</div>
+                <div class="diff-remove pl-2 py-0.5 text-red-300">-     if n <= 1:</div>
+                <div class="diff-remove pl-2 py-0.5 text-red-300">-         return n</div>
+                <div class="diff-remove pl-2 py-0.5 text-red-300">-     return fibonacci(n-1) + fibonacci(n-2)</div>
+                <div class="pl-2 py-0.5 text-gray-500">&nbsp;</div>
+                <div class="pl-2 py-0.5 text-gray-400">  # Test the function</div>
+                <div class="pl-2 py-0.5 text-gray-400">  for i in range(10):</div>
+              </div>
+            </div>
+            
+            <!-- After -->
+            <div>
+              <div class="px-3 py-2 bg-surface-200/50 border-b border-gray-800">
+                <span class="text-xs font-medium text-gray-500">AFTER</span>
+              </div>
+              <div class="p-3 h-48 overflow-auto font-mono text-xs">
+                <div class="diff-add pl-2 py-0.5 text-green-300">+ from functools import lru_cache</div>
+                <div class="diff-add pl-2 py-0.5 text-green-300">+ @lru_cache(maxsize=None)</div>
+                <div class="diff-add pl-2 py-0.5 text-green-300">+ def fibonacci(n):</div>
+                <div class="diff-add pl-2 py-0.5 text-green-300">+     if n <= 1:</div>
+                <div class="diff-add pl-2 py-0.5 text-green-300">+         return n</div>
+                <div class="diff-add pl-2 py-0.5 text-green-300">+     return fibonacci(n-1) + fibonacci(n-2)</div>
+                <div class="pl-2 py-0.5 text-gray-400">  # Test the function</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Status Cards -->
+        <div class="grid grid-cols-4 gap-3">
+          <button onclick="setStatus('success')" class="group p-4 bg-surface-100 rounded-xl border border-gray-800 hover:border-success/50 hover:glow-success transition-all duration-300">
+            <div class="w-8 h-8 rounded-lg bg-success/10 flex items-center justify-center mb-2 group-hover:bg-success/20 transition-colors">
+              <svg class="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <span class="text-xs font-medium text-gray-400 group-hover:text-success transition-colors">Success</span>
+          </button>
+          
+          <button onclick="setStatus('fixed')" class="group p-4 bg-surface-100 rounded-xl border border-gray-800 hover:border-warning/50 hover:glow-warning transition-all duration-300">
+            <div class="w-8 h-8 rounded-lg bg-warning/10 flex items-center justify-center mb-2 group-hover:bg-warning/20 transition-colors">
+              <svg class="w-5 h-5 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 4a2 2 0 114 0v1a1 1 0 001 1h3a1 1 0 011 1v3a1 1 0 01-1 1h-1a2 2 0 100 4h1a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-1a2 2 0 10-4 0v1a1 1 0 01-1 1H7a1 1 0 01-1-1v-3a1 1 0 00-1-1H4a2 2 0 110-4h1a1 1 0 001-1V7a1 1 0 011-1h3a1 1 0 001-1V4z"/>
+              </svg>
+            </div>
+            <span class="text-xs font-medium text-gray-400 group-hover:text-warning transition-colors">Fixed</span>
+          </button>
+          
+          <button onclick="setStatus('failed')" class="group p-4 bg-surface-100 rounded-xl border border-gray-800 hover:border-error/50 hover:glow-error transition-all duration-300">
+            <div class="w-8 h-8 rounded-lg bg-error/10 flex items-center justify-center mb-2 group-hover:bg-error/20 transition-colors">
+              <svg class="w-5 h-5 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+            </div>
+            <span class="text-xs font-medium text-gray-400 group-hover:text-error transition-colors">Failed</span>
+          </button>
+          
+          <button onclick="setStatus('timeout')" class="group p-4 bg-surface-100 rounded-xl border border-gray-800 hover:border-timeout/50 hover:glow-timeout transition-all duration-300">
+            <div class="w-8 h-8 rounded-lg bg-timeout/10 flex items-center justify-center mb-2 group-hover:bg-timeout/20 transition-colors">
+              <svg class="w-5 h-5 text-timeout" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <span class="text-xs font-medium text-gray-400 group-hover:text-timeout transition-colors">Timeout</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-gray-800 mt-12">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between text-sm text-gray-500">
+      <span>AutoExec v1.0.0</span>
+      <div class="flex items-center gap-4">
+        <span class="flex items-center gap-1.5">
+          <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+          Connected
+        </span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Update line numbers
+    function updateLineNumbers() {
+      const editor = document.getElementById('codeEditor');
+      const lineNumbers = document.getElementById('lineNumbers');
+      const lines = editor.value.split('\n').length;
+      lineNumbers.innerHTML = Array.from({length: lines}, (_, i) => i + 1).join('<br>');
+    }
+    
+    // Initialize line numbers
+    updateLineNumbers();
+    
+    // Toggle tests section
+    function toggleTests() {
+      const container = document.getElementById('testsContainer');
+      const chevron = document.getElementById('testsChevron');
+      container.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-180');
+    }
+    
+    // Switch output tabs
+    function switchTab(tab) {
+      const tabs = ['stdout', 'stderr'];
+      tabs.forEach(t => {
+        document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.remove('tab-active');
+        document.getElementById(`${t}Panel`).classList.add('hidden');
+      });
+      document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('tab-active');
+      document.getElementById(`${tab}Panel`).classList.remove('hidden');
+    }
+    
+    // Clear editor
+    function clearEditor() {
+      document.getElementById('codeEditor').value = '';
+      updateLineNumbers();
+    }
+    
+    // Set status
+    function setStatus(status) {
+      const statusDot = document.getElementById('statusDot');
+      const statusText = document.getElementById('statusText');
+      const statusBadge = document.getElementById('statusBadge');
+      
+      const statusConfig = {
+        success: { color: 'bg-success', text: 'Success', glow: 'glow-success' },
+        fixed: { color: 'bg-warning', text: 'Fixed', glow: 'glow-warning' },
+        failed: { color: 'bg-error', text: 'Failed', glow: 'glow-error' },
+        timeout: { color: 'bg-timeout', text: 'Timeout', glow: 'glow-timeout' },
+        running: { color: 'bg-accent', text: 'Running...', glow: '' },
+        ready: { color: 'bg-gray-500', text: 'Ready', glow: '' }
+      };
+      
+      const config = statusConfig[status];
+      statusDot.className = `w-2 h-2 rounded-full ${config.color}`;
+      statusText.textContent = config.text;
+      
+      // Remove all glow classes and add new one
+      statusBadge.classList.remove('glow-success', 'glow-error', 'glow-warning', 'glow-timeout');
+      if (config.glow) statusBadge.classList.add(config.glow);
+    }
+    
+    // Simulate run
+    function runCode() {
+      const runButton = document.getElementById('runButton');
+      const runIcon = document.getElementById('runIcon');
+      const runText = document.getElementById('runText');
+      
+      // Show loading state
+      runButton.disabled = true;
+      runButton.classList.add('opacity-75');
+      runIcon.innerHTML = '<svg class="w-5 h-5 spinner" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>';
+      runText.textContent = 'Running...';
+      setStatus('running');
+      
+      // Simulate execution
+      setTimeout(() => {
+        runButton.disabled = false;
+        runButton.classList.remove('opacity-75');
+        runIcon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+        runText.textContent = 'Run Code';
+        setStatus('success');
+      }, 1500);
+    }
+    
+    // Sync textarea scroll with line numbers
+    document.getElementById('codeEditor').addEventListener('scroll', function() {
+      document.getElementById('lineNumbers').style.transform = `translateY(-${this.scrollTop}px)`;
+    });
+  </script>
+</body>
+</html>

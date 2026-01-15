@@ -22,3 +22,8 @@ experiments/
 .DS_Store
 
 autoexec.egg-info/
+# Node junk
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+yarn.loc
