@@ -5,7 +5,7 @@ from autoexec.memory import FixMemory
 from autoexec.tester import run_tests
 
 
-# ⛔ Errors that AutoExec must NEVER try to auto-fix
+
 NON_FIXABLE_ERRORS = {
     "TimeoutError",
     "ExecutionTimeout",

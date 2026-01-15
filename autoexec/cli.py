@@ -6,7 +6,6 @@ from autoexec.agent import AutoExecAgent
 
 
 def run_command(args):
-    # Resolve paths from where the user runs the command
     cwd = Path(os.getcwd())
 
     code_path = (cwd / args.code).resolve()

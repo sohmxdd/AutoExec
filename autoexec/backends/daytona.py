@@ -2,6 +2,7 @@ import subprocess
 from daytona import Daytona
 from autoexec.core import ExecutionBackend, ExecutionResult
 
+# NOTE: Daytona backend is intended for cloud runners, not local execution
 
 class DaytonaBackend(ExecutionBackend):
     def __init__(self):
@@ -34,10 +35,10 @@ class DaytonaBackend(ExecutionBackend):
         try:
             sandbox.start()
 
-            # 🔑 Find actual container ID
+            
             container_id = self._get_container_id(sandbox.id)
 
-            # ▶ Execute code inside container
+            
             proc = subprocess.run(
                 [
                     "docker",
