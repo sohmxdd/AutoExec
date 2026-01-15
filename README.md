@@ -46,7 +46,8 @@ AutoExec/
 │     └─ daytona.py   # Experimental sandbox backend
 ├─ examples/
 │  └─ test_agent.py   # Example usage
-
+├─ ui/
+   └─ index.html      # Optional UI
 ```
 ## Quick Start
 
