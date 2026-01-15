@@ -4,6 +4,7 @@
 AutoExec is a developer tool that runs code, detects failures, fixes them using an LLM, retries execution, and remembers the fix so the same error is instantly resolved next time.
 
 Think of it as an intelligent execution layer that sits between your code and runtime errors.
+<img width="790" height="693" alt="image" src="https://github.com/user-attachments/assets/97f4a9b1-857d-4c9f-b8c0-a1d3b04f6f52" />
 
 ---
 
@@ -14,6 +15,7 @@ Think of it as an intelligent execution layer that sits between your code and ru
 * **Learn from past fixes** using persistent memory.
 * **Inspect every change** via diffs (no black boxes).
 * **Designed to grow** into CI tools, dashboards, and hosted sandboxes.
+<img width="776" height="396" alt="image" src="https://github.com/user-attachments/assets/2c2468cc-a381-4806-9f18-f6dc06a327f7" />
 
 ---
 
