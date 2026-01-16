@@ -11,7 +11,6 @@ agent = AutoExecAgent()
 result = agent.run(
     code="""
 print("Hello!")
-10 / 0
 """
 )
 
