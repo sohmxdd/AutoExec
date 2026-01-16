@@ -5,7 +5,6 @@ from autoexec.agent import AutoExecAgent
 
 
 def run_command(args):
-    # Resolve path safely (relative → absolute)
     code_path = Path(args.code).expanduser().resolve()
 
     if not code_path.exists():
