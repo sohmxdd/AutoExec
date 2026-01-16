@@ -63,7 +63,7 @@ class AutoExecAgent:
 
             print("\nResult :", "SUCCESS" if result.success else "FAILED")
 
-            # ❌ Crash handling
+            
             if not result.success:
                 error_type = result.error_type
                 print("\nError detected:", error_type)
@@ -85,7 +85,7 @@ class AutoExecAgent:
                     )
                     self.memory.store(error_type, fixed_code)
 
-            # ✅ Run tests if execution succeeded
+            
             elif tests:
                 sub_section("Running Tests")
                 test_result = run_tests(result.stdout, tests)
@@ -103,11 +103,11 @@ class AutoExecAgent:
                     test_result.error
                 )
 
-            # ✅ Clean success, no tests
+            
             else:
                 return result
 
-            # 🧩 Show diff
+            
             diff = unified_diff(current_code, fixed_code)
             if diff.strip():
                 sub_section("Code Diff")
