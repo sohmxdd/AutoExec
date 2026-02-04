@@ -55,7 +55,6 @@ AutoExec/
 
 ```text
 1️⃣ Setup
-Bash
 
 git clone [https://github.com/sohmxdd/AutoExec.git](https://github.com/sohmxdd/AutoExec.git)
 cd AutoExec
