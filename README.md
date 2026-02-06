@@ -69,7 +69,7 @@ pip install -r requirements.txt
 2️⃣ Configure API Keys
 Create a .env file for LLM support:
 
-Code snippet
+Code snippet:
 
 GROQ_API_KEY=your_key_here
 # or
